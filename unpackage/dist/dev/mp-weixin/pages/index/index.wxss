@@ -72,6 +72,7 @@
 	font-size: 32rpx;
 	color: #333333;
 	line-height: 44rpx;
+	font-weight: 600;
 }
 .time image {
 	width: 30rpx;
@@ -92,6 +93,9 @@
 }
 .left {
 	margin-left: 24rpx;
+	display: flex;
+	justify-content: left;
+	align-items: center;
 }
 .right {
 	margin-right: 24rpx;
@@ -104,12 +108,24 @@
 	font-size: 24rpx;
 	font-weight: 600;
 	color: #333333;
+	margin-top: 14rpx;
+}
+.center{
+	border-left: 2rpx solid #E4E4E4;
+	padding-left: 28rpx;
+	margin-right: 90rpx;
 }
 .center .top {
 	height: 50rpx;
 	font-size: 36rpx;
-	color: #ED1F23;
+	font-weight: 600;
 	line-height: 50rpx;
+}
+.center .top1{
+	color: #ED1F23;
+}
+.center .top2{
+	color: #3A9E44;
 }
 .center .bottom,
 .right text {
@@ -142,7 +158,7 @@
 .details .list-item .left image {
 	width: 24rpx;
 	height: 24rpx;
-	vertical-align: middle;
+	margin-top: 14rpx;
 }
 .details .list-item .left text {
 	color: #888888;

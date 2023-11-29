@@ -10,7 +10,7 @@
 				<text>绿色积分</text>
 				<text>规则</text>
 			</view>
-			<view class="integral">300w+</view>
+			<view class="integral">300</view>
 		</view>
 		<view class="record">
 			<text class="line"></text>
@@ -43,23 +43,23 @@
 					</view>
 				</view>
 			</view> -->
-			<view class="box" v-for="item in recordList" :key="item.id">
+			<view class="box" v-for="(item,index) in recordList" :key="item.id">
 				<view class="box-top">
 					<view class="left">
 						<text>5</text>
 						<text>/10</text>
 					</view>
 					<view class="center">
-						<view class="top">
-							+12.00
+						<view :class="[item.integral>=0?'top1':'top2','top']">
+							{{item.integral}}
 						</view>
 						<view class="bottom">
-							绿色积分 | 剩余：150
+							绿色积分 | 剩余：{{item.residue}}
 						</view>
 					</view>
 					<view class="right">
 						<text>详情</text>
-						<uni-icons :type="item.record?'bottom':'top'" size="16"></uni-icons>
+						<uni-icons :type="item.record?'bottom':'top'" size="16" @click="changeRecord(index)" ></uni-icons>
 					</view>
 				</view>
 				<view v-show="item.record" class="line"></view>
@@ -193,7 +193,7 @@
 						</view>
 					</view>
 					<view v-show="current===0" class="pick">
-						<picker-view :indicator-style="indicatorStyle" :value="value" @change="bindChange"
+						<picker-view :indicator-style="indicatorStyle" value=" [9999, 13]" @change="bindChange"
 							class="picker-view">
 							<picker-view-column>
 								<view class="item" v-for="(item,index) in years" :key="index">{{item}}年</view>
@@ -208,21 +208,21 @@
 							交易时间
 						</view>
 						<view class="btns">
-							<button :class="[index===0?'active':'']" @tap="changeIndex(0)">上月</button>
-							<button :class="[index===1?'active':'']" @tap="changeIndex(1)">近三月</button>
-							<button :class="[index===2?'active':'']" @tap="changeIndex(2)">近一年</button>
+							<button :disabled="index==-2" :class="[index===0?'active':'']" @tap="changeIndex(0)">上月</button>
+							<button :disabled="index==-2" :class="[index===1?'active':'']" @tap="changeIndex(1)">近三月</button>
+							<button :disabled="index==-2" :class="[index===2?'active':'']" @tap="changeIndex(2)">近一年</button>
 						</view>
 						<view class="text">
 							自定义
 						</view>
 						<view class="pick">
-							<picker mode="date" :value="date" @change="leftDateChange">
+							<picker mode="date" :value="date" :disabled="index>=0" @change="leftDateChange">
 								<view class="uni-input">{{leftDate}}</view>
 							</picker>
 							<view class="line">
 								——
 							</view>
-							<picker mode="date" :value="date" :start="leftFormatDate" @change="rightDateChange">
+							<picker mode="date" :value="date" :disabled="index>=0" :start="leftFormatDate" @change="rightDateChange">
 								<view class="uni-input">{{rightDate}}</view>
 							</picker>
 						</view>
@@ -250,27 +250,34 @@
 				//记录数组
 				recordList: [{
 						id: 1,
-						record: false
+						record: false,
+						integral:+12.00,
+						residue:150
 					},
 					{
 						id: 2,
-						record: true
+						record: true,
+						integral:+12.00,
+						residue:138
 					},
 					{
 						id: 3,
-						record: true
+						record: true,
+						integral:-2,
+						residue:126
 					}
 				],
 				recordTime: '2023年10月', //记录时间
 				//点击tab
 				current: 0,
 				//点击btn
-				index: 0,
+				index: -1,
 				years: [],
 				months: [],
-				year: 0,
-				month: 0,
+				year: 1990,
+				month: 1,
 				indicatorStyle: `height: 50px;`,
+				value1: [9999, 13, 32],
 				value: [9999, this.month - 1],
 				//消息提示
 				messageText: '',
@@ -278,7 +285,7 @@
 				date: '',
 				//左边自定义显示时间
 				leftDate: '',
-				//左边自定义标准时间right
+				//左边自定义标准时间
 				leftFormatDate: '',
 				//右边自定义显示时间
 				rightDate: '',
@@ -291,6 +298,10 @@
 			this.getDate()
 		},
 		methods: {
+			//点击上下箭头
+			changeRecord(i){
+				this.recordList[i].record=!this.recordList[i].record
+			},
 			//打开popup
 			toggle(type) {
 				// open 方法传入参数 等同在 uni-popup 组件上绑定 type属性
@@ -298,6 +309,7 @@
 			},
 			//关闭popup
 			closeDialog() {
+				this.index=-1
 				this.$refs.popup.close()
 			},
 			//改变类名
@@ -307,9 +319,7 @@
 			//picker-view所需的时间
 			getPickerView() {
 				const date = new Date()
-				this.year = date.getFullYear()
-				this.month = date.getMonth() + 1
-				for (let i = 1990; i <= date.getFullYear(); i++) {
+				for (let i = this.year; i <= date.getFullYear(); i++) {
 					this.years.push(i)
 				}
 				for (let i = 1; i <= 12; i++) {
@@ -321,15 +331,24 @@
 				const val = e.detail.value
 				this.year = this.years[val[0]]
 				this.month = this.months[val[1]]
+				console.log(this.year,this.month )
 			},
 			//点击提交
 			submit() {
 				if (this.current === 0) {
+					console.log(this.year,this.month)
 					this.recordTime = `${this.year}年${this.month}月`
 				} else {
+					if(this.index>-1){
+						this.index==0?this.recordTime ='上月':this.index==1?this.recordTime ='近三月':this.recordTime ='近一年'
+					}
+					if(this.index==-2){
+						this.recordTime=`${this.leftDate}至${this.rightDate}`
+					}
 					this.messageText=`查询${this.leftDate}至${this.rightDate}的记录`
 					this.$refs.message.open()
 				}
+				this.index=-1
 				this.$refs.popup.close()
 			},
 			//改变index和时间
@@ -349,6 +368,7 @@
 				this.leftFormatDate = e.detail.value
 				let arr = this.leftFormatDate.split('-')
 				this.leftDate = `${arr[0]}年${arr[1]}月${arr[2]}日`
+				this.index=-2
 
 			},
 			//点击右边自定义时间
@@ -356,6 +376,7 @@
 				this.rightFormatDate = e.detail.value
 				let arr = this.rightFormatDate.split('-')
 				this.rightDate = `${arr[0]}年${arr[1]}月${arr[2]}日`
+				this.index=-2
 			},
 			//获取年月日
 			getDate() {
@@ -456,6 +477,7 @@
 		font-size: 32rpx;
 		color: #333333;
 		line-height: 44rpx;
+		font-weight: 600;
 	}
 
 	.time image {
@@ -480,12 +502,13 @@
 
 	.left {
 		margin-left: 24rpx;
+		display: flex;
+		justify-content: left;
+		align-items: center;
 	}
-
 	.right {
 		margin-right: 24rpx;
 	}
-
 	.left text:nth-child(1) {
 		font-size: 48rpx;
 		color: black;
@@ -495,15 +518,25 @@
 		font-size: 24rpx;
 		font-weight: 600;
 		color: #333333;
+		margin-top: 14rpx;
 	}
-
+	.center{
+		border-left: 2rpx solid #E4E4E4;
+		padding-left: 28rpx;
+		margin-right: 90rpx;
+	}
 	.center .top {
 		height: 50rpx;
 		font-size: 36rpx;
-		color: #ED1F23;
+		font-weight: 600;
 		line-height: 50rpx;
 	}
-
+	.center .top1{
+		color: #ED1F23;
+	}
+	.center .top2{
+		color: #3A9E44;
+	}
 	.center .bottom,
 	.right text {
 		height: 34rpx;
@@ -540,7 +573,7 @@
 	.details .list-item .left image {
 		width: 24rpx;
 		height: 24rpx;
-		vertical-align: middle;
+		margin-top: 14rpx;
 	}
 
 	.details .list-item .left text {

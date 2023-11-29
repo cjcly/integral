@@ -1557,7 +1557,7 @@ function initData(vueOptions, context) {
     try {
       data = data.call(context); // 支持 Vue.prototype 上挂的数据
     } catch (e) {
-      if (Object({"NODE_ENV":"development","VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.warn('根据 Vue 的 data 函数初始化小程序 data 失败，请尽量确保 data 函数中不访问 vm 对象，否则可能影响首次数据渲染速度。', data);
       }
     }
@@ -8934,7 +8934,7 @@ function type(obj) {
 
 function flushCallbacks$1(vm) {
     if (vm.__next_tick_callbacks && vm.__next_tick_callbacks.length) {
-        if (Object({"NODE_ENV":"development","VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+        if (Object({"VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:flushCallbacks[' + vm.__next_tick_callbacks.length + ']');
@@ -8955,14 +8955,14 @@ function nextTick$1(vm, cb) {
     //1.nextTick 之前 已 setData 且 setData 还未回调完成
     //2.nextTick 之前存在 render watcher
     if (!vm.__next_tick_pending && !hasRenderWatcher(vm)) {
-        if(Object({"NODE_ENV":"development","VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:nextVueTick');
         }
         return nextTick(cb, vm)
     }else{
-        if(Object({"NODE_ENV":"development","VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance$1 = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance$1.is || mpInstance$1.route) + '][' + vm._uid +
                 ']:nextMPTick');
@@ -9058,7 +9058,7 @@ var patch = function(oldVnode, vnode) {
     });
     var diffData = this.$shouldDiffData === false ? data : diff(data, mpData);
     if (Object.keys(diffData).length) {
-      if (Object({"NODE_ENV":"development","VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"VUE_APP_DARK_MODE":"false","VUE_APP_NAME":"boss","VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + this._uid +
           ']差量更新',
           JSON.stringify(diffData));
@@ -9651,14 +9651,114 @@ uni.addInterceptor({
 /* 37 */,
 /* 38 */,
 /* 39 */,
-/* 40 */,
+/* 40 */
+/*!***************************************!*\
+  !*** F:/uniapp/boss/utils/getTime.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getOneMonth = getOneMonth;
+exports.getOneYear = getOneYear;
+exports.getThreeMounth = getThreeMounth;
+//获取上月
+function getOneMonth() {
+  var end = new Date();
+  var year = end.getFullYear();
+  var month = end.getMonth() + 1 < 10 ? "0".concat(end.getMonth() + 1) : end.getMonth() + 1;
+  var day = end.getDate() > 9 ? end.getDate() : '0' + end.getDate();
+  var dateObj = {};
+  dateObj.now = year + '-' + month + '-' + day;
+  var endMonthDay = new Date(year, month, 0).getDate();
+  if (month - 1 <= 0) {
+    dateObj.last = year - 1 + '-' + 12 + '-' + day;
+  } else {
+    var startMonthDay = new Date(year, parseInt(month) - 1, 0).getDate();
+    if (startMonthDay < day) {
+      if (day < endMonthDay) {
+        dateObj.last = year + '-' + (month - 1) + '-' + (startMonthDay - (endMonthDay - day));
+      } else {
+        dateObj.last = year + '-' + (month - 1) + '-' + startMonthDay;
+      }
+    } else {
+      dateObj.last = year + '-' + (month - 1 < 10 ? "0".concat(month - 1) : month - 1) + '-' + day;
+    }
+  }
+  return dateObj;
+}
+//前三月
+function getThreeMounth() {
+  var end = new Date();
+  var year = end.getFullYear();
+  var month = end.getMonth() + 1 < 10 ? "0".concat(end.getMonth() + 1) : end.getMonth() + 1;
+  var day = end.getDate() > 9 ? end.getDate() : '0' + end.getDate();
+  var dateObj = {};
+  dateObj.now = year + '-' + month + '-' + day;
+  var endMonthDay = new Date(year, month, 0).getDate(); //当前月的总天数
+  if (month - 3 <= 0) {
+    //如果是1、2、3月，年数往前推一年
+    var start3MonthDay = new Date(year - 1, 12 - (3 - parseInt(month)), 0).getDate(); //3个月前所在月的总天数
+    if (start3MonthDay < day) {
+      //3个月前所在月的总天数小于现在的天日期
+      dateObj.last = year - 1 + '-' + (12 - (3 - month)) + '-' + start3MonthDay;
+    } else {
+      dateObj.last = year - 1 + '-' + (12 - (3 - month)) + '-' + day;
+    }
+  } else {
+    var start3MonthDay = new Date(year, parseInt(month) - 3, 0).getDate(); //3个月前所在月的总天数
+    if (start3MonthDay < day) {
+      //3个月前所在月的总天数小于现在的天日期
+      if (day < endMonthDay) {
+        //当前天日期小于当前月总天数,2月份比较特殊的月份
+        dateObj.last = year + '-' + (month - 3) + '-' + (start3MonthDay - (endMonthDay - day));
+      } else {
+        dateObj.last = year + '-' + (month - 3) + '-' + start3MonthDay;
+      }
+    } else {
+      dateObj.last = year + '-' + (month - 3 < 10 ? "0".concat(month - 3) : month - 3) + '-' + day;
+    }
+  }
+  return dateObj;
+}
+// 近一年
+function getOneYear() {
+  var nowDate = new Date();
+  var dates = new Date(nowDate);
+  var year = dates.getFullYear();
+  var month = dates.getMonth() + 1; //0-11表示1-12月
+  var day = dates.getDate();
+  var dateObj = {};
+  dateObj.now = year + '-' + month + '-' + day;
+  dates.setDate(dates.getDate() - 365);
+  var seperator1 = '-';
+  var year = dates.getFullYear();
+  var month = dates.getMonth() + 1;
+  var strDate = dates.getDate();
+  if (month >= 1 && month <= 9) {
+    month = '0' + month;
+  }
+  if (strDate >= 0 && strDate <= 9) {
+    strDate = '0' + strDate;
+  }
+  dateObj.last = year + seperator1 + month + seperator1 + strDate;
+  return dateObj;
+}
+
+/***/ }),
 /* 41 */,
 /* 42 */,
 /* 43 */,
 /* 44 */,
 /* 45 */,
 /* 46 */,
-/* 47 */
+/* 47 */,
+/* 48 */
 /*!**************************************************************************!*\
   !*** F:/uniapp/boss/uni_modules/uni-icons/components/uni-icons/icons.js ***!
   \**************************************************************************/
@@ -10679,7 +10779,6 @@ var _default = {
 exports.default = _default;
 
 /***/ }),
-/* 48 */,
 /* 49 */,
 /* 50 */,
 /* 51 */,
@@ -10694,9 +10793,55 @@ exports.default = _default;
 /* 60 */,
 /* 61 */,
 /* 62 */,
-/* 63 */,
+/* 63 */
+/*!**************************************************************************!*\
+  !*** F:/uniapp/boss/uni_modules/uni-popup/components/uni-popup/popup.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  data: function data() {
+    return {};
+  },
+  created: function created() {
+    this.popup = this.getParent();
+  },
+  methods: {
+    /**
+     * 获取父元素实例
+     */
+    getParent: function getParent() {
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'uniPopup';
+      var parent = this.$parent;
+      var parentName = parent.$options.name;
+      while (parentName !== name) {
+        parent = parent.$parent;
+        if (!parent) return false;
+        parentName = parent.$options.name;
+      }
+      return parent;
+    }
+  }
+};
+exports.default = _default;
+
+/***/ }),
 /* 64 */,
-/* 65 */
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */
 /*!**********************************************************************************************!*\
   !*** F:/uniapp/boss/uni_modules/uni-transition/components/uni-transition/createAnimation.js ***!
   \**********************************************************************************************/
@@ -10828,153 +10973,6 @@ function createAnimation(option, _this) {
   return new MPAnimation(option, _this);
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
-
-/***/ }),
-/* 66 */,
-/* 67 */
-/*!***************************************!*\
-  !*** F:/uniapp/boss/utils/getTime.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getOneMonth = getOneMonth;
-exports.getOneYear = getOneYear;
-exports.getThreeMounth = getThreeMounth;
-//获取上月
-function getOneMonth() {
-  var end = new Date();
-  var year = end.getFullYear();
-  var month = end.getMonth() + 1 < 10 ? "0".concat(end.getMonth() + 1) : end.getMonth() + 1;
-  var day = end.getDate() > 9 ? end.getDate() : '0' + end.getDate();
-  var dateObj = {};
-  dateObj.now = year + '-' + month + '-' + day;
-  var endMonthDay = new Date(year, month, 0).getDate();
-  if (month - 1 <= 0) {
-    dateObj.last = year - 1 + '-' + 12 + '-' + day;
-  } else {
-    var startMonthDay = new Date(year, parseInt(month) - 1, 0).getDate();
-    if (startMonthDay < day) {
-      if (day < endMonthDay) {
-        dateObj.last = year + '-' + (month - 1) + '-' + (startMonthDay - (endMonthDay - day));
-      } else {
-        dateObj.last = year + '-' + (month - 1) + '-' + startMonthDay;
-      }
-    } else {
-      dateObj.last = year + '-' + (month - 1 < 10 ? "0".concat(month - 1) : month - 1) + '-' + day;
-    }
-  }
-  return dateObj;
-}
-//前三月
-function getThreeMounth() {
-  var end = new Date();
-  var year = end.getFullYear();
-  var month = end.getMonth() + 1 < 10 ? "0".concat(end.getMonth() + 1) : end.getMonth() + 1;
-  var day = end.getDate() > 9 ? end.getDate() : '0' + end.getDate();
-  var dateObj = {};
-  dateObj.now = year + '-' + month + '-' + day;
-  var endMonthDay = new Date(year, month, 0).getDate(); //当前月的总天数
-  if (month - 3 <= 0) {
-    //如果是1、2、3月，年数往前推一年
-    var start3MonthDay = new Date(year - 1, 12 - (3 - parseInt(month)), 0).getDate(); //3个月前所在月的总天数
-    if (start3MonthDay < day) {
-      //3个月前所在月的总天数小于现在的天日期
-      dateObj.last = year - 1 + '-' + (12 - (3 - month)) + '-' + start3MonthDay;
-    } else {
-      dateObj.last = year - 1 + '-' + (12 - (3 - month)) + '-' + day;
-    }
-  } else {
-    var start3MonthDay = new Date(year, parseInt(month) - 3, 0).getDate(); //3个月前所在月的总天数
-    if (start3MonthDay < day) {
-      //3个月前所在月的总天数小于现在的天日期
-      if (day < endMonthDay) {
-        //当前天日期小于当前月总天数,2月份比较特殊的月份
-        dateObj.last = year + '-' + (month - 3) + '-' + (start3MonthDay - (endMonthDay - day));
-      } else {
-        dateObj.last = year + '-' + (month - 3) + '-' + start3MonthDay;
-      }
-    } else {
-      dateObj.last = year + '-' + (month - 3 < 10 ? "0".concat(month - 3) : month - 3) + '-' + day;
-    }
-  }
-  return dateObj;
-}
-// 近一年
-function getOneYear() {
-  var nowDate = new Date();
-  var dates = new Date(nowDate);
-  var year = dates.getFullYear();
-  var month = dates.getMonth() + 1; //0-11表示1-12月
-  var day = dates.getDate();
-  var dateObj = {};
-  dateObj.now = year + '-' + month + '-' + day;
-  dates.setDate(dates.getDate() - 365);
-  var seperator1 = '-';
-  var year = dates.getFullYear();
-  var month = dates.getMonth() + 1;
-  var strDate = dates.getDate();
-  if (month >= 1 && month <= 9) {
-    month = '0' + month;
-  }
-  if (strDate >= 0 && strDate <= 9) {
-    strDate = '0' + strDate;
-  }
-  dateObj.last = year + seperator1 + month + seperator1 + strDate;
-  return dateObj;
-}
-
-/***/ }),
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */
-/*!**************************************************************************!*\
-  !*** F:/uniapp/boss/uni_modules/uni-popup/components/uni-popup/popup.js ***!
-  \**************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _default = {
-  data: function data() {
-    return {};
-  },
-  created: function created() {
-    this.popup = this.getParent();
-  },
-  methods: {
-    /**
-     * 获取父元素实例
-     */
-    getParent: function getParent() {
-      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'uniPopup';
-      var parent = this.$parent;
-      var parentName = parent.$options.name;
-      while (parentName !== name) {
-        parent = parent.$parent;
-        if (!parent) return false;
-        parentName = parent.$options.name;
-      }
-      return parent;
-    }
-  }
-};
-exports.default = _default;
 
 /***/ })
 ]]);
